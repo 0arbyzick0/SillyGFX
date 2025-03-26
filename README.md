@@ -1,5 +1,5 @@
 ### SillyGFX - Ультимативная библиотека на MicroPython для графики!
-[![GitHub stars](https://img.shields.io/github/stars/Naereen/StrapDown.js.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/Naereen/StrapDown.js/stargazers/)
+
 
 ## Особенности
 - Полная поддержка кириллицы (все русские буквы в шрифтах 5x7 и 8x16)
