@@ -6,6 +6,8 @@
 
 - Аппаратное ускорение для SPI/I2C
 
+- Поддержка OLED (I2C/SPI), LED матриц (MAX7219, HT16K33), NeoPixel
+
 - 20+ готовых эффектов анимации
 
 - Оптимизированная работа даже на слабых устройствах
@@ -13,7 +15,13 @@
 - Поддержка BMP/XBM изображений
 
 ## Установка
-Перемести папку SillyGFX в папку /lib на твоём микроконтроллере!
+1. Перемести папку SillyGFX в папку /lib на твоём микроконтроллере или папку своего проекта!
+2. Импортируйте нужные модули:
+```python
+from SillyGFX.core import SillyGFX
+from SillyGFX.matrix import Matrix
+from SillyGFX.effects import GFXEffects
+```
 
 ## Быстрый тест
 ```python
@@ -33,7 +41,20 @@ gfx.text("Привет!", 20, 25, 1)
 gfx.effects.crt_power_on()
 gfx.update()
 ```
-
+### Кастомизация
+## Добавление своих шрифтов
+1. Создайте файл my_font.py:
+```python
+FONT = {
+    'A': [0x3E, 0x48, 0x88, 0x48, 0x3E],
+    'B': [0xFE, 0x92, 0x92, 0x92, 0x6C]
+}
+```
+2. Используйте в проекте:
+```python
+from my_font import FONT
+display.set_font(FONT)
+```
 ### Документация
 ## Основные методы
 # Графика
@@ -55,7 +76,7 @@ char(char, x, y, color)     # Один символ
 draw_bmp(filename, x, y)    # BMP изображение
 draw_xbm(data, x, y, w, h)  # XBM изображение
 ```
-# Эффекта (effects.py)
+# Эффекты (effects.py)
 ```python
 # Основные
 wipe(direction=0)           # Шторка (0=гориз, 1=верт)
@@ -74,6 +95,18 @@ parallax_scroll(layers)     # Параллакс-эффект
 # Спецэффекты
 tv_scanlines(cycles=5)      # Полосы ЭЛТ
 crt_static(duration=1000)   # Телевизионные помехи
+```
+Матрицы (matrix.py)
+```python
+set_brightness(level)	Яркость 0-15
+scroll_text(text, speed)	Прокрутка текста
+pixel(x, y, color)	Управление пикселем
+update() Обновить дисплей
+clear() Очистить дисплей
+set_font(self, font_data, width=5, height=7) Поставить шрифт
+text(self, text, x, y, color=1, spacing=1) Текст
+fill_screen(self, x, y, w, h, color=1) Заполнить экран
+hline(self, x, y, w, color=1) Линия
 ```
 
 ### Сравнение
