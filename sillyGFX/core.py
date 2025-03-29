@@ -25,7 +25,7 @@ RGB565 = framebuf.RGB565       # 16-bit цветной
 GS4_HMSB = framebuf.GS4_HMSB   # 4-bit градации серого
 
 class SillyGFX:
-    def __init__(self, width=128, height=64, i2c=None, i2c_addr=0x3C):
+    def __init__(self, width=128, height=64, i2c=None, i2c_addr=0x3C, format=MONO_VLSB):
         self.width = width
         self.height = height
         self.format = framebuf.MONO_VLSB  # Обязательно для SSD1306!
@@ -429,51 +429,33 @@ class SillyGFX:
         self.text(char, x, y, color)
         
     def set_font(self, font_data, width=5, height=7):
-        """Безопасная установка шрифта с проверкой данных"""
-        try:
-            # Проверяем, что font_data - словарь
-            if not isinstance(font_data, dict):
-                raise ValueError("Font data must be a dictionary")
-            
-            # Проверяем первый доступный символ
-            sample_char = next(iter(font_data.values()))
-            if not isinstance(sample_char, (list, bytes, bytearray)):
-                raise ValueError("Each character must be a list/bytes of pixel data")
-                
-            # Устанавливаем шрифт
-            self._font = font_data
-            self._font_width = width
-            self._font_height = height
-            
-            print(f"Font set: {len(font_data)} chars, {width}x{height} pixels")
-            
-        except Exception as e:
-            print(f"Font loading error: {e}")
-            # Устанавливаем шрифт по умолчанию
-            self._font = {'?': [0x00, 0x00, 0x00, 0x00, 0x00]}
-            self._font_width = 5
-            self._font_height = 7
+        """Безопасная установка шрифта"""
+        self._font = font_data  # Основное хранилище
+        self._font_width = width
+        self._font_height = height
+        
+        # Автоматическая загрузка стандартного шрифта при ошибке
+        if not isinstance(font_data, dict):
+            from sillyGFX.fonts.font5x7 import DATA as default_font
+            self._font = default_font
+            print("Внимание: передан неверный шрифт, загружен стандартный")
 
     def text(self, text, x, y, color=1):
-        """Вывод текста с принудительной обработкой кириллицы"""
+        """Исправленный вывод текста"""
+        if not hasattr(self, '_font'):
+            raise RuntimeError("Шрифт не установлен. Сначала вызовите set_font()")
+        
         for char in text:
-            # Получаем Unicode-код символа
-            char_code = ord(char)
+            # Получаем данные символа или заменяем на '?'
+            char_data = self._font.get(char, self._font.get('?', [0]*5))
             
-            # Ручная подмена проблемных символов
-            if char_code == 0x418:  # Кириллическая 'И'
-                char_data = self._font.get('И', [0]*5)
-            elif char_code == 0x439:  # Кириллическая 'й'
-                char_data = self._font.get('й', [0]*5)
-            else:
-                char_data = self._font.get(char, [0]*5)
-            
-            # Отрисовка
-            for col in range(len(char_data)):
-                for row in range(7):
-                    if char_data[col] & (1 << row):
-                        self.pixel(x+col, y+row, color)
-            x += len(char_data) + 1
+            # Отрисовка каждого столбца символа
+            for col in range(min(5, len(char_data))):
+                col_data = char_data[col]
+                for row in range(7):  # Для шрифта 5x7
+                    if col_data & (1 << row):
+                        self.pixel(x + col, y + row, color)
+            x += 6  # 5px символ + 1px пробел
 
     def pixel(self, x, y, color):
         """Установка пикселя с проверкой границ"""
@@ -481,4 +463,3 @@ class SillyGFX:
             self.fb.pixel(x, y, color)                          
     
     # --- ДРУГОЕ ---
-    
