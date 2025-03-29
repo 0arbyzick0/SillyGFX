@@ -96,18 +96,6 @@ parallax_scroll(layers)     # Параллакс-эффект
 tv_scanlines(cycles=5)      # Полосы ЭЛТ
 crt_static(duration=1000)   # Телевизионные помехи
 ```
-Матрицы (matrix.py)
-```python
-set_brightness(level)	Яркость 0-15
-scroll_text(text, speed)	Прокрутка текста
-pixel(x, y, color)	Управление пикселем
-update() Обновить дисплей
-clear() Очистить дисплей
-set_font(self, font_data, width=5, height=7) Поставить шрифт
-text(self, text, x, y, color=1, spacing=1) Текст
-fill_screen(self, x, y, w, h, color=1) Заполнить экран
-hline(self, x, y, w, color=1) Линия
-```
 
 ### Сравнение
 
