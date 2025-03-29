@@ -15,18 +15,18 @@
 - Поддержка BMP/XBM изображений
 
 ## Установка
-1. Перемести папку SillyGFX в папку /lib на твоём микроконтроллере или папку своего проекта!
+1. Перемести папку sillyGFX в папку /lib на твоём микроконтроллере или папку своего проекта!
 2. Импортируйте нужные модули:
 ```python
-from SillyGFX.core import SillyGFX
-from SillyGFX.matrix import Matrix
-from SillyGFX.effects import GFXEffects
+from sillyGFX.core import sillyGFX
+from sillyGFX.matrix import Matrix
+from sillyGFX.effects import GFXEffects
 ```
 
 ## Быстрый тест
 ```python
 from machine import I2C
-from sillyGFX import SillyGFX
+from sillyGFX.core import SillyGFX
 
 # Инициализация
 i2c = I2C(0, scl=Pin(5), sda=Pin(4))
